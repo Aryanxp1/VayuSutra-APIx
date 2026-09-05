@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb",
+        "runtime": "python3.11"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "api/index.py"
+    }
+  ],
+  "env": {
+    "ENVIRONMENT": "production",
+    "PYTHONPATH": ".",
+    "AUTH_SECRET_KEY": "CHANGE_ME__SET_IN_VERCEL_DASHBOARD_ENV_VARS"
+  }
+}

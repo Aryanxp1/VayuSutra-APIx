@@ -1,0 +1,72 @@
+# ==============================================================================
+# VayuSutra APIx - Git Ignore Configuration
+# Prevents large binary files, caches, and logs from exceeding GitHub limits
+# ==============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches and runtime test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Databases & local data snapshots (runtime-generated, never published)
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Large media, video screen recordings & slides (kept deleted per project rules)
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.pptx
+*.ppt
+uploads/
+*.zip
+*.tar.gz
+
+# IDE and OS metadata
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local runtime logs and local environment overrides (never commit .env)
+*.log
+.env
+.env.*
+!.env.example
+
+# Node.js dependencies (restore via `npm ci`)
+node_modules/
+
+# Serialized ML model artifacts (regenerable via model_trainer)
+*.pkl
+
+# Manual development / smoke-test artifacts (never publish)
+_dbinspect.py
+_smoke_*.py
+_fc.json
+_hm.json
+_tok.txt
