@@ -1,0 +1,7 @@
+# Git attributes for VayuSutra APIx
+# ------------------------------------------------------------------------------
+# Markdown documents use the "two trailing spaces" convention for hard line
+# breaks, and CSV rows may legitimately contain trailing spaces in fields.
+# Exempt these file types from `git diff --check` whitespace errors.
+*.md -whitespace
+*.csv -whitespace
