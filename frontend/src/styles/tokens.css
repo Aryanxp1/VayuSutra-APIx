@@ -1,0 +1,148 @@
+:root {
+  /* === Brand Identity === */
+  --brand-saffron: #C2510A;
+  --brand-saffron-hover: #A3420A;
+  --brand-saffron-light: rgba(194, 81, 10, 0.08);
+  --brand-saffron-border: rgba(194, 81, 10, 0.2);
+
+  /* === Spacing Scale === */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* === Typography === */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+
+  /* === Radius === */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* === Shadows === */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  /* === Layout === */
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 64px;
+  --topbar-height: 56px;
+
+  /* === Transitions === */
+  --transition-fast: 120ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+/* === LIGHT THEME === */
+[data-theme="light"] {
+  --bg-primary: #FAFAF8;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #F5F5F3;
+  --bg-hover: #F0F0EE;
+  --bg-active: #EAEAE8;
+  --bg-sidebar: #FFFFFF;
+  --bg-topbar: rgba(255, 255, 255, 0.85);
+  --bg-card: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --bg-badge: #F0F0EE;
+
+  --text-primary: #1A1A2E;
+  --text-secondary: #64748B;
+  --text-tertiary: #94A3B8;
+  --text-inverse: #FFFFFF;
+  --text-on-brand: #FFFFFF;
+
+  --border-primary: #E2E8F0;
+  --border-secondary: #F1F5F9;
+  --border-focus: var(--brand-saffron);
+
+  --semantic-success: #16A34A;
+  --semantic-success-bg: rgba(22, 163, 74, 0.08);
+  --semantic-error: #DC2626;
+  --semantic-error-bg: rgba(220, 38, 38, 0.08);
+  --semantic-warning: #D97706;
+  --semantic-warning-bg: rgba(217, 119, 6, 0.08);
+  --semantic-info: #2563EB;
+  --semantic-info-bg: rgba(37, 99, 235, 0.08);
+
+  --chart-grid: #F1F5F9;
+  --chart-tooltip-bg: #FFFFFF;
+  --chart-tooltip-border: #E2E8F0;
+
+  color-scheme: light;
+}
+
+/* === DARK THEME === */
+[data-theme="dark"] {
+  --bg-primary: #0F172A;
+  --bg-secondary: #1E293B;
+  --bg-tertiary: #162032;
+  --bg-hover: #283548;
+  --bg-active: #334155;
+  --bg-sidebar: #0F172A;
+  --bg-topbar: rgba(15, 23, 42, 0.9);
+  --bg-card: #1E293B;
+  --bg-input: #1E293B;
+  --bg-badge: #283548;
+
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-tertiary: #64748B;
+  --text-inverse: #0F172A;
+  --text-on-brand: #FFFFFF;
+
+  --border-primary: #334155;
+  --border-secondary: #1E293B;
+  --border-focus: #38BDF8;
+
+  --semantic-success: #22C55E;
+  --semantic-success-bg: rgba(34, 197, 94, 0.12);
+  --semantic-error: #EF4444;
+  --semantic-error-bg: rgba(239, 68, 68, 0.12);
+  --semantic-warning: #F59E0B;
+  --semantic-warning-bg: rgba(245, 158, 11, 0.12);
+  --semantic-info: #60A5FA;
+  --semantic-info-bg: rgba(96, 165, 250, 0.12);
+
+  --brand-saffron: #F97316;
+  --brand-saffron-hover: #FB923C;
+  --brand-saffron-light: rgba(249, 115, 22, 0.1);
+  --brand-saffron-border: rgba(249, 115, 22, 0.25);
+
+  --chart-grid: #1E293B;
+  --chart-tooltip-bg: #1E293B;
+  --chart-tooltip-border: #334155;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+  color-scheme: dark;
+}
