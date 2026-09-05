@@ -20,7 +20,7 @@ from dataclasses import asdict
 
 from fastapi import FastAPI, HTTPException, Query, Response, WebSocket, WebSocketDisconnect, Depends, Header, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -96,6 +96,13 @@ DASHBOARD_PATH = os.path.join(STATIC_DIR, "dashboard.html")
 VIDEO_PATH = os.path.join(STATIC_DIR, "video_walkthrough.html")
 SOLUTION_CARD_PATH = os.path.join(STATIC_DIR, "proposed_solution_card.html")
 
+# Built React frontend (Vite build output). Override via FRONTEND_DIST_DIR for
+# non-standard layouts; defaults to <repo root>/frontend/dist.
+FRONTEND_DIST_DIR = os.getenv(
+    "FRONTEND_DIST_DIR",
+    os.path.join(os.path.dirname(BASE_DIR), "frontend", "dist"),
+)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -132,11 +139,19 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS Middleware
+# CORS Middleware — environment-driven.
+# Set CORS_ORIGINS to a comma-separated list of allowed origins for production,
+# e.g. CORS_ORIGINS=https://app.example.com,https://www.example.com
+# Leave as "*" (default) to allow all origins. Bearer-token authentication is
+# header-based (no cookies), so credentials are only enabled for explicit origins.
+_CORS_ORIGINS_ENV = os.getenv("CORS_ORIGINS", "*")
+CORS_ORIGINS_ALLOWED = [o.strip() for o in _CORS_ORIGINS_ENV.split(",") if o.strip()]
+CORS_ALLOW_CREDENTIALS = CORS_ORIGINS_ALLOWED != ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=CORS_ORIGINS_ALLOWED,
+    allow_credentials=CORS_ALLOW_CREDENTIALS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -217,7 +232,7 @@ async def enforce_jwt_auth(request: Request, call_next):
 # =============================================================================
 
 def get_dashboard_html_content() -> str:
-    """Finds and returns dashboard HTML with multi-path resolution for serverless containers."""
+    """Finds and returns legacy dashboard HTML with multi-path resolution for serverless containers."""
     candidate_paths = [
         DASHBOARD_PATH,
         os.path.join(os.getcwd(), "vayusutra_apix", "static", "dashboard.html"),
@@ -231,21 +246,29 @@ def get_dashboard_html_content() -> str:
     return "<h2>VAYUSUTRA APIx &bull; National Airfare Intelligence &amp; Inflation Decision Platform</h2>"
 
 
-@app.get("/", response_class=HTMLResponse, summary="National Airfare Intelligence Command Center")
-def serve_dashboard():
-    """Serves the standalone interactive zero-dependency HTML dashboard."""
+def _serve_react_index():
+    """Serves the built React SPA index.html, falling back to the legacy HTML dashboard when unbuilt."""
+    index_path = os.path.join(FRONTEND_DIST_DIR, "index.html")
+    if os.path.isfile(index_path):
+        return FileResponse(index_path)
     return HTMLResponse(content=get_dashboard_html_content())
+
+
+@app.get("/", response_class=HTMLResponse, summary="National Airfare Intelligence Dashboard")
+def serve_dashboard():
+    """Serves the React intelligence dashboard (falls back to the legacy HTML command center)."""
+    return _serve_react_index()
 
 
 @app.get("/routes/{route_code}", response_class=HTMLResponse, summary="Route Intelligence Page")
 def serve_route_page(route_code: str):
-    """Serves the dashboard with automatic route focus."""
-    return serve_dashboard()
+    """Serves the React dashboard (route focus is handled client-side)."""
+    return _serve_react_index()
 
 
 @app.get("/data-quality", response_class=HTMLResponse, summary="Data Trust Center View")
 def serve_data_quality_view():
-    return serve_dashboard()
+    return _serve_react_index()
 
 
 @app.get("/video", response_class=HTMLResponse, summary="Hindi Video Walkthrough & Team Guide")
@@ -1725,3 +1748,39 @@ def export_cpi_csv_endpoint():
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
+
+
+# =============================================================================
+# 7. REACT SPA FALLBACK (registered last so it never shadows API / docs / static)
+# =============================================================================
+
+@app.get("/{full_path:path}", include_in_schema=False, summary="React SPA fallback")
+def serve_react_spa(full_path: str):
+    """Serves the built React application for client-side routes.
+
+    Registered last, so concrete /api/v1/*, /docs, /static and websocket routes always
+    win. Unknown API-ish paths still return a JSON 404 instead of index.html.
+    """
+    if not full_path:
+        return _serve_react_index()
+
+    normalized = os.path.normpath(full_path).replace("\\", "/")
+    first_segment = normalized.strip("/").split("/")[0] if normalized.strip("/") else ""
+
+    # Never answer backend/API paths with the SPA entry point.
+    if (
+        first_segment in ("api", "docs", "redoc", "metrics", "static", "ws")
+        or normalized == "openapi.json"
+    ):
+        raise HTTPException(status_code=404, detail="Not found")
+
+    # Path traversal guard: only serve files that live inside the build directory.
+    if normalized == ".." or normalized.startswith("../") or normalized.startswith("/"):
+        raise HTTPException(status_code=404, detail="Not found")
+
+    candidate = os.path.abspath(os.path.join(FRONTEND_DIST_DIR, normalized))
+    dist_root = os.path.abspath(FRONTEND_DIST_DIR)
+    if candidate.startswith(dist_root + os.sep) and os.path.isfile(candidate):
+        return FileResponse(candidate)
+
+    return _serve_react_index()

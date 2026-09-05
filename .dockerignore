@@ -1,0 +1,65 @@
+# ==============================================================================
+# VayuSutra APIx - Docker build context exclusions
+# Keeps the build context (and the final image) free of secrets, caches,
+# local databases, massive dependency folders and non-runtime files.
+# ==============================================================================
+
+# Version control & CI
+.git
+.github
+.gitattributes
+.gitignore
+
+# Alternate deployment manifests (not needed inside the runtime image)
+api/
+vercel.json
+.vercelignore
+docs/
+deploy/
+tests/
+vayusutra_apix/tests/
+
+# Node.js (the built SPA is copied from the web-builder stage)
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Python caches & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+BUILD/
+*.egg-info/
+
+# Secrets & local environment overrides (NEVER baked into an image)
+.env
+.env.*
+!.env.example
+**/.env
+!**/.env.example
+
+# Runtime application data (regenerated inside the container / persisted on disk)
+# NOTE: CSV datasets under vayusutra_apix/data/ ARE kept in the image; only the
+# SQLite DB, models and journals are excluded.
+vayusutra_apix/data/models/
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite3
+*.pkl
+
+# Logs & local dev artifacts
+*.log
+_tok.txt
+_dbinspect.py
+_smoke_*.py
+_fc.json
+_hm.json

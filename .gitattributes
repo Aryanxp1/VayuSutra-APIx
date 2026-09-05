@@ -5,3 +5,9 @@
 # Exempt these file types from `git diff --check` whitespace errors.
 *.md -whitespace
 *.csv -whitespace
+
+# Force shell scripts to keep LF endings on every platform so container
+# entrypoints (exec'ed directly with a #!/bin/sh shebang) never break on CRLF.
+*.sh text eol=lf
+Dockerfile text eol=lf
+.dockerignore text eol=lf

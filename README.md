@@ -206,13 +206,49 @@ Representative endpoints:
 
 ## Deployment
 
+### Recommended: Render (single Docker container)
+
+The repo-root `Dockerfile` builds **both** the React frontend and the FastAPI
+backend into one image. One public domain then serves:
+
+- `/` → React/Vite application
+- `/api/v1/*`, `/ws/live-feed` → FastAPI API + WebSocket
+- `/api/v1/stream/events` → SSE live feed
+
+**Render setup:** Web Service → Docker → repo `Dockerfile`; add a **persistent
+disk mounted at `/app/vayusutra_apix/data`** (SQLite DB + model artifacts) and
+set **health check path `/api/v1/health`**.
+
+**Required environment variables:**
+
+| Variable | Example | Notes |
+| :--- | :--- | :--- |
+| `AUTH_SECRET_KEY` | `python3 -c "import secrets; print(secrets.token_hex(32))"` | Required — startup fails fast without it in production |
+| `CORS_ORIGINS` | `https://your-app.onrender.com` | Comma-separated allowed origins |
+| `WORKERS_COUNT` | `1` | Recommended for a single background-worker daemon |
+
+### Local Docker test
+
+```bash
+docker build -t vayusutra-apix:prod .
+docker run -d -p 8000:8000 \
+  -e AUTH_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')" \
+  -e WORKERS_COUNT=1 \
+  vayusutra-apix:prod
+curl -fsS http://localhost:8000/api/v1/health
+```
+
+### Alternative targets
+
 - **Docker Compose:** `docker-compose up -d --build` (FastAPI + Nginx gateway + persistent volume)
 - **Kubernetes:** manifests under `deploy/k8s/` (ConfigMap, Secret, Deployment, Service, Ingress, HPA)
 - **Bare-metal / systemd:** unit file under `deploy/systemd/`
-- **Serverless / Vercel:** `api/index.py` entrypoint + `vercel.json`
 - **CI/CD:** GitHub Actions workflows under `.github/workflows/`
 
-> **Security reminder:** always set a real `AUTH_SECRET_KEY` via the environment or your secret manager. The value in `.env.example` (and the development fallback in `vayusutra_apix/auth/security.py`) is a placeholder.
+> **Security reminder:** always set a real `AUTH_SECRET_KEY` via the environment
+> or your secret manager. Production startup **fails fast** if it is missing, the
+> value in `.env.example` is a placeholder, and the development fallback in
+> `vayusutra_apix/auth/security.py` is never used when `ENVIRONMENT=production`.
 
 ---
 

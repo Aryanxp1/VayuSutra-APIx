@@ -58,11 +58,13 @@ def test_expired_token_rejected(client):
 
 
 def test_dashboard_endpoint(client):
-    """GET / returns HTML dashboard."""
+    """GET / returns an HTML dashboard — the built React SPA, or the legacy HTML
+    command center when the frontend is not built."""
     response = client.get("/")
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
-    assert "VAYUSUTRA APIx" in response.text
+    # React SPA root, or legacy dashboard heading
+    assert ('<div id="root">' in response.text) or ("VAYUSUTRA APIx" in response.text)
 
 
 def test_health_endpoint(client):

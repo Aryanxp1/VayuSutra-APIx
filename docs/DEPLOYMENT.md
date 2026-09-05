@@ -15,6 +15,88 @@ VayuSutra APIx supports four primary deployment methods:
 | ⚡ **Bare-Metal / Systemd** | Ubuntu / Debian / RHEL Government Datacenter Servers | Systemd daemon service + Uvicorn/Gunicorn workers | **3 Minutes** |
 | ☁️ **Serverless / PaaS** | Render, Railway, Fly.io, Google Cloud Run | Containerized stateless execution with volume mount | **1-Click** |
 
+## 🖥️ Render (Recommended) — Single-Container Deployment
+
+> The complete application (FastAPI + React SPA + WebSockets + background worker)
+> runs in **one long-lived Docker container** with a **persistent disk**. This is
+> the simplest reliable production architecture for VayuSutra APIx.
+
+### Architecture
+
+```
+Internet ──► Render Web Service (Docker)
+             │
+             ├── GET /            → React SPA (built into /app/frontend/dist)
+             ├── /assets/* …      → built frontend assets
+             ├── /api/v1/*        → FastAPI REST API
+             ├── /ws/live-feed    → FastAPI WebSocket
+             └── /api/v1/stream/events → SSE live feed
+             │
+             └── Persistent Disk (≤ 10 GiB) mounted at /app/vayusutra_apix/data
+                  ├── vayusutra_airfare.db        (SQLite)
+                  ├── models/apix_nowcast_ensemble.pkl
+                  └── dgca_30day_backtest_report.csv
+```
+
+### Steps (Render Dashboard)
+
+1. Create a new **Web Service** and point it at the GitHub repository
+   `Aryanxp1/VayuSutra-APIx`.
+2. **Environment:** Docker → the repo-root `Dockerfile` (builds the React
+   frontend and the FastAPI image automatically).
+3. **Runtime:** key in `docker-entrypoint.sh` starts uvicorn as the non-root
+   `mospi` user. Start command is bundled in the image — leave it empty.
+4. **Persistent disk:** add one and mount it at `/app/vayusutra_apix/data`
+   (recommended ≥ 10 GiB). SQLite DB, ML model artifacts and backtest CSVs live
+   under this directory.
+5. **Health check path:** `/api/v1/health` (the image also self-checks via its
+   Docker `HEALTHCHECK`).
+6. **Region:** any Render region (SQLite is on the same node as the container).
+
+### Required environment variables (Render dashboard → Environment)
+
+| Variable | Value | Required? |
+| :--- | :--- | :--- |
+| `AUTH_SECRET_KEY` | Generate: `python3 -c "import secrets; print(secrets.token_hex(32))"` | ✅ Yes — startup **fails fast** without it in production |
+| `CORS_ORIGINS` | e.g. `https://vayusutra.onrender.com` (comma-separated list) | Recommended |
+| `WORKERS_COUNT` | `1` recommended (single worker daemon, single WS broadcast group) | Optional |
+
+Defaults handled by the image: `ENVIRONMENT=production`, `PORT=8000`,
+`PYTHONPATH=/app`, `FRONTEND_DIST_DIR=/app/frontend/dist`.
+
+> ⚠️ Store `AUTH_SECRET_KEY` in Render's **Environment (secret)** store. Never
+> put a real secret in source code or `vercel.json`.
+
+### Local Docker test
+
+```bash
+docker build -t vayusutra-apix:prod .
+docker run -d --name vayusutra-test -p 8000:8000 \
+  -e AUTH_SECRET_KEY="$(python3 -c "import secrets; print(secrets.token_hex(32))")" \
+  -e WORKERS_COUNT=1 \
+  vayusutra-apix:prod
+
+curl -fsS http://localhost:8000/api/v1/health   # 200
+open http://localhost:8000                       # React SPA
+```
+
+### Important limitations
+
+- **SQLite is single-node:** the persistent disk is bound to one Render instance/
+  region. Do not scale to multiple replicas that share a single SQLite file.
+- **First boot seeding:** an empty persistent disk is initialised on first start
+  (schema + RBAC + 35-day backtest + nowcast model). Allow a few minutes before
+  the first healthcheck reports data.
+- **Demo users:** the API seeds development-only demo accounts
+  (`mospi2026!` etc.) for the SIH demo — replace with real identity management
+  before mission-critical use.
+- **Background worker:** the 60 s ingestion/model-retraining daemon runs inside
+  the container and persists to the disk. Use `WORKERS_COUNT=1` to avoid
+  duplicate daemon cycles across uvicorn workers.
+- **No external services** (databases/queues) are required — everything is in
+  the container plus its disk.
+
+---
 ---
 
 ## 🐳 2. Quickstart with Docker Compose (Recommended)

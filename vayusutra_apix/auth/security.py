@@ -12,14 +12,31 @@ import base64
 from typing import Optional, Dict, Any, Tuple
 from .models import UserRole, ROLE_PERMISSIONS
 
-# Platform secret for HMAC token signing (override via AUTH_SECRET_KEY env var).
-# The fallback below is an insecure development-only default and MUST be overridden
-# in any real deployment via the AUTH_SECRET_KEY environment variable / secret manager.
+# Platform secret for HMAC token signing (REQUIRED from the environment in production).
+#
+# IMPORTANT: production deployments (ENVIRONMENT=production/prod) MUST set a strong
+# random AUTH_SECRET_KEY, otherwise startup FAILS fast instead of silently shipping
+# with a predictable signing key. Generate one with:
+#     python3 -c "import secrets; print(secrets.token_hex(32))"
 import os as _os
-AUTH_SECRET = _os.environ.get(
-    "AUTH_SECRET_KEY",
-    "vayusutra-apix-insecure-dev-default--replace-with-a-random-secret",
-)
+
+
+def _resolve_auth_secret() -> str:
+    secret = _os.environ.get("AUTH_SECRET_KEY", "").strip()
+    if secret:
+        return secret
+    environment = _os.environ.get("ENVIRONMENT", "").strip().lower()
+    if environment in ("production", "prod"):
+        raise RuntimeError(
+            "AUTH_SECRET_KEY environment variable is not set. "
+            "Generate one with `python3 -c \"import secrets; print(secrets.token_hex(32))\"` "
+            "and configure it in the deployment environment / secret manager."
+        )
+    # Development-only fallback (NEVER used in production — see guard above).
+    return "dev-only-insecure-secret--set-AUTH_SECRET_KEY-before-production"
+
+
+AUTH_SECRET = _resolve_auth_secret()
 TOKEN_EXPIRY_SECONDS = 86400 * 7  # 7 days
 
 
