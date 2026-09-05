@@ -1,6 +1,7 @@
 # VayuSutra APIx — National Airfare Intelligence & Inflation Decision Platform
 
 **Measure • Explain • Forecast • Simulate**
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An aviation intelligence platform for **airfare price indices, corridor analytics, forecasting, simulation, data trust, anomaly detection and policy intelligence** — built for the **Smart India Hackathon 2026 (Problem Statement SIH26056)**.
 
@@ -23,6 +24,7 @@ An aviation intelligence platform for **airfare price indices, corridor analytic
 9. [Repository Layout](#repository-layout)
 10. [Limitations & Disclaimers](#limitations--disclaimers)
 11. [Team](#team)
+12. [License](#license)
 
 ---
 
@@ -298,11 +300,10 @@ curl -fsS http://localhost:8000/api/v1/health
 
 ## Team
 
-**Team VayuSutra** (Smart India Hackathon 2026, SIH26056):
+**VayuSutra APIx** was designed, architected, engineered and deployed entirely by **Aryan Vishwakarma** (Smart India Hackathon 2026, SIH26056):
 
-1. **Dev Parth (Leader)** — Lead Architect & Team Lead
-2. **Avanish Kumar** — Data Engineering Lead
-3. **Anushka Mall** — Scraper & Ingestion Lead
-4. **Aryan Vishwakarma** — Econometric Modeling Lead
-5. **Sumit** — Backend & Telemetry Engineer
-6. **Aryan** — UI/UX & Visualizations Lead
+- **Aryan Vishwakarma** — Lead Architect & Principal System Architect. Owns the full stack: econometric index mathematics (Jevons / Laspeyres / Superlative Fisher / Walsh), CPI transmission ΔBps modelling, AI/ML nowcast ensemble (Ridge + GBDT), scraper & ingestion engine, FastAPI REST backend, WebSocket/SSE streaming, data-engineering pipeline, and the React/HTML5 visualization command center.
+
+## License
+
+Released under the [MIT License](LICENSE). Government reference datasets cited under [Data Sources & Provenance](#data-sources--provenance) and packaged in Docker remain subject to their respective source terms (MoSPI / DGCA / RBI).

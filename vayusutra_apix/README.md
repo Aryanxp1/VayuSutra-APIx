@@ -7,14 +7,11 @@
 
 ---
 
-## 👥 Team VayuSutra (6 Members)
+## 👤 Author
 
-1. **Dev Parth (Leader)** — Lead Architect & Team Lead *(System Architecture, Econometric Math, AI Nowcasting Ensemble, Full-Stack Leadership)*
-2. **Avanish Kumar** — Data Engineering Lead *(Data Cleaning Pipeline, Multi-OTA Deduplication & MAD Outlier Filter Algorithms)*
-3. **Anushka Mall** — Scraper & Ingestion Lead *(Ethical Scraper Engine, Token Bucket Rate Limiter & MoSPI eSankhyiki Connector)*
-4. **Aryan Vishwakarma** — Econometric Modeling Lead *(Superlative Fisher/Walsh Index Mathematics, CPI Transmission $\Delta\text{Bps}$ & Macro Elasticity)*
-5. **Sumit** — Backend & Telemetry Engineer *(FastAPI REST Architecture, Prometheus OpenMetrics, WebSockets & Background Worker Daemon)*
-6. **Aryan** — UI/UX & Visualizations Lead *(Bento Command Center UI, HTML5 Canvas Live Graphs, 20x5 Airfare Heatmap Matrix & Design Tokens)*
+**VayuSutra** was built entirely by **Aryan Vishwakarma** — Lead Architect & Principal System Architect.
+
+*System Architecture, Econometric Index Mathematics (Jevons / Laspeyres / Superlative Fisher / Walsh), CPI Transmission ΔBps Modeling, AI/ML Nowcast Ensemble (Ridge + GBDT), Data Engineering Pipeline, Scraper & Ingestion Engine, FastAPI REST Architecture, WebSocket/SSE Streaming, and the HTML5/React Visualization Command Center.*
 
 ---
 

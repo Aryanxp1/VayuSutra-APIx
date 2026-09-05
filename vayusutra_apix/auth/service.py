@@ -65,14 +65,14 @@ PRE_SEEDED_USERS = [
         "username": "admin",
         "email": "admin@vayusutra.gov.in",
         "raw_password": "admin2026!",
-        "full_name": "Dev Parth and Team VayuSutra",
+        "full_name": "Aryan Vishwakarma",
         "role": UserRole.SYSTEM_ADMIN,
-        "designation": "Team Lead & Principal System Architect",
-        "organization": "Team VayuSutra (Dev Parth, Avanish Kumar, Anushka Mall, Aryan Vishwakarma, Sumit, Aryan)",
+        "designation": "Lead Architect & Principal System Architect",
+        "organization": "Team VayuSutra",
         "department": "National Infrastructure & Data Engineering",
         "avatar_color": "#38bdf8",  # Cyan Blue
         "badge_theme": "cyan",
-        "description": "Team VayuSutra (6 Members): Dev Parth (Leader), Avanish Kumar, Anushka Mall, Aryan Vishwakarma, Sumit, Aryan. Full Root Clearance.",
+        "description": "Aryan Vishwakarma — Lead Architect, Econometric Modeling, AI/ML Nowcasting & Full-Stack Development. Full Root Clearance.",
         "key_features": ["Full Subsystem Clearance", "60s Worker Daemon Controls", "ML Nowcast Model Retraining", "Cryptographic Provenance Vault"]
     },
     {
